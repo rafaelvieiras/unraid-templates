@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>M3m0s</Name>
+  <Repository>ghcr.io/rafaelvieiras/m3m0s:latest</Repository>
+  <Registry>https://github.com/rafaelvieiras/m3m0s/pkgs/container/m3m0s</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/rafaelvieiras/m3m0s/issues</Support>
+  <Project>https://github.com/rafaelvieiras/m3m0s</Project>
+  <Overview>Long-term memory for LLM agents: MCP, CLI and an embedded WebUI over one local database. Tool-agnostic, so Claude Code, pi, opencode, Hermes and Open WebUI can read and write the same memory.</Overview>
+  <Category>Tools:Utilities:</Category>
+  <WebUI>http://[IP]:[PORT:19234]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/m3m0s.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/m3m0s/main/site/public/icon-512.png</Icon>
+  <ExtraParams>--user 99:100</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <Date>2026-11-16</Date>
+  <Changes>Initial template. Image 0.8.1.</Changes>
+  <MinVer>6.9</MinVer>
+  <License>MIT</License>
+  <ExtraSearchTerms>memory ai agent mcp rag embeddings llm claude</ExtraSearchTerms>
+  <Description><![CDATA[
+M3m0s is a long-term memory service for LLM agents. One instance holds the memory, and
+every client talks to it over the authenticated HTTP API, the MCP endpoint or the CLI.
+
+### First start
+
+1. Open the WebUI and create the first account right away. The setup page needs no API key,
+   so anyone who reaches the instance first can claim it. Do not expose the port before
+   finishing this step.
+2. The first start also prints a generated API key in the container log. Copy it, because it
+   is shown only once. Use it as `M3M0S_API_KEY` in the clients.
+
+### Embeddings
+
+`OPENAI_API_KEY` is optional. Without it the server still runs, but in keyword-only mode:
+search uses full-text (FTS5) and deduplication is exact-match only. Set the key to enable
+vector search.
+
+### Clients
+
+- Remote MCP: `http://<server>:19234/mcp` with the header `Authorization: Bearer <key>`.
+- CLI and stdio MCP bridge: install `m3m0s` from the project and set `M3M0S_URL` and
+  `M3M0S_API_KEY`.
+- Hook integrations for Claude Code, pi, opencode and Hermes are in the project repository.
+
+### Container notes
+
+- The container runs as `nobody:users` (99:100) so it can write to appdata. The image does
+  not support PUID/PGID yet.
+- The database and API keys live in `/data`. Point it at a cache or array path that you back
+  up; the directory must be writable by the container.
+- No database is shipped with the image. A fresh instance starts empty.
+- Project documentation: https://github.com/rafaelvieiras/m3m0s
+  ]]></Description>
+  <Networking>
+    <Mode>bridge</Mode>
+    <Publish>
+      <Port>
+        <HostPort>19234</HostPort>
+        <ContainerPort>19234</ContainerPort>
+        <Protocol>tcp</Protocol>
+      </Port>
+    </Publish>
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/user/appdata/m3m0s</HostDir>
+      <ContainerDir>/data</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <Environment>
+    <Variable>
+      <Value>M3M0S_DATA_DIR</Value>
+      <Value>/data</Value>
+    </Variable>
+  </Environment>
+  <Config Name="WebUI" Target="19234" Default="19234" Mode="tcp" Description="HTTP port for the WebUI, the REST API and the MCP endpoint." Type="Port" Display="always" Required="true" Mask="false">19234</Config>
+  <Config Name="Data" Target="/data" Default="/mnt/user/appdata/m3m0s" Mode="rw" Description="Database, index and API keys. Keep it on a path you back up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/m3m0s</Config>
+  <Config Name="OpenAI API key" Target="OPENAI_API_KEY" Default="" Description="Used for embeddings. Empty: keyword-only mode (FTS5 search, exact-match dedup)." Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="OpenAI base URL" Target="M3M0S_OPENAI_BASE_URL" Default="" Description="Optional OpenAI-compatible embeddings endpoint. Empty: api.openai.com." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Extraction API key" Target="M3M0S_EXTRACT_API_KEY" Default="" Description="Enables LLM fact extraction. Empty: each memory_add stores one raw entry." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="Extraction base URL" Target="M3M0S_EXTRACT_BASE_URL" Default="" Description="OpenAI-compatible endpoint for extraction. Empty: https://openrouter.ai/api/v1." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Extraction model" Target="M3M0S_EXTRACT_MODEL" Default="" Description="Model used for fact extraction. Empty: the built-in default." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Chat API key" Target="M3M0S_CHAT_API_KEY" Default="" Description="Enables the WebUI chat. Empty: falls back to the extraction key." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="MCP read-only" Target="M3M0S_MCP_READ_ONLY" Default="" Description="1 hides and rejects the MCP write tools, so agents can only read memory." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Timezone" Target="TZ" Default="America/Sao_Paulo" Description="Container timezone used for logs and scheduled jobs." Type="Variable" Display="advanced" Required="false" Mask="false">America/Sao_Paulo</Config>
+</Container>

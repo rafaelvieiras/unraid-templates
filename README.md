@@ -11,13 +11,20 @@ raw GitHub URLs and lists the apps in the Apps tab after review.
 | Path | Purpose |
 |------|---------|
 | `ca_profile.xml` | Repository profile shown in CA. Must stay at the repository root. |
-| `templates/` | One XML file per Docker app. |
+| `templates/` | One XML file per Docker app (`m3m0s.xml` today, plus the `.example` skeleton). |
 | `plugins/` | One XML wrapper per Unraid plugin (none yet). |
 | `icon.svg` | Repository icon referenced by `ca_profile.xml`. |
 
+## Apps
+
+| App | Image | Port | Volume | Notes |
+|-----|-------|------|--------|-------|
+| M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`; no image registry login needed once the GHCR package is public. |
+
 ## Status
 
-Skeleton only. No app is submitted yet, so the repository is not registered in CA.
+`M3m0s` is the first and only template. Nothing is submitted yet, so the repository is not
+registered in CA and the listing does not exist.
 
 ## Adding an app
 
