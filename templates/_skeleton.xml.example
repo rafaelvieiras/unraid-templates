@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Skeleton for one Community Applications Docker template.
+  Keep this file as .example so the CA scanner never parses it.
+  To list an app: copy it to templates/<app>.xml and replace every placeholder.
+-->
+<Container version="2">
+  <Name>App Name</Name>
+  <Repository>ghcr.io/rafaelvieiras/REPO:latest</Repository>
+  <Registry>https://github.com/rafaelvieiras/REPO/pkgs/container/REPO</Registry>
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/REPO/main/icon.png</Icon>
+
+  <!-- Always the container port, never the host port. -->
+  <WebUI>http://[IP]:[PORT:8080]</WebUI>
+
+  <Overview>One or two sentences shown in the Apps listing. Mention first-run setup.</Overview>
+  <Description>Longer text, markdown supported. Bake in the networking and first-run gotchas here.</Description>
+
+  <Category>Tools:Utilities</Category>
+  <Project>https://github.com/rafaelvieiras/REPO</Project>
+  <Support>https://github.com/rafaelvieiras/REPO/issues</Support>
+  <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/APP.xml</TemplateURL>
+
+  <MinVer>6.1</MinVer>
+  <MaxVer>7.4</MaxVer>
+  <License>MIT</License>
+  <Date>2026-01-01</Date>
+  <Changes>Initial release</Changes>
+  <ExtraSearchTerms>keyword keyword</ExtraSearchTerms>
+
+  <Config Name="WebUI" Target="8080" Default="8080" Mode="tcp" Description="HTTP port for the web interface." Type="Port" Display="always" Required="true" Mask="false">8080</Config>
+  <Config Name="Appdata" Target="/config" Default="/mnt/user/appdata/APP" Mode="rw" Description="Persistent configuration and data." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/APP</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Description="User ID the container runs as. Unraid default: 99 (nobody)." Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Description="Group ID the container runs as. Unraid default: 100 (users)." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+  <Config Name="Timezone" Target="TZ" Default="America/Sao_Paulo" Description="Container timezone." Type="Variable" Display="advanced" Required="false" Mask="false">America/Sao_Paulo</Config>
+</Container>

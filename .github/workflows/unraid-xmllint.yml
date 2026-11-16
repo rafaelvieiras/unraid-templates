@@ -1,0 +1,29 @@
+name: Validate Unraid templates
+
+on:
+  push:
+    paths:
+      - "**.xml"
+      - ".github/workflows/unraid-xmllint.yml"
+  pull_request:
+    paths:
+      - "**.xml"
+  workflow_dispatch:
+
+jobs:
+  xmllint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xmllint
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+      - name: Check well-formedness
+        run: |
+          shopt -s nullglob
+          files=(ca_profile.xml templates/*.xml plugins/*.xml)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No XML files to check."
+            exit 0
+          fi
+          printf 'checking %s\n' "${files[@]}"
+          xmllint --noout "${files[@]}"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommunityApplications>
+  <Profile>
+    Unraid container templates maintained by [Rafael Vieiras](https://github.com/rafaelvieiras).
+
+    One template per self-hosted project published to Unraid Community Applications.
+    Each app has its own XML file under `templates/` and its own support link, so bug
+    reports go to the project repository. Source code is on GitHub under the same
+    maintainer account.
+  </Profile>
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icon.svg</Icon>
+  <WebPage>https://github.com/rafaelvieiras/unraid-templates</WebPage>
+  <!-- Add once a stable support thread exists on forums.unraid.net.
+  <Forum>https://forums.unraid.net/topic/REPLACE_ME</Forum>
+  -->
+</CommunityApplications>
