@@ -19,7 +19,7 @@ raw GitHub URLs and lists the apps in the Apps tab after review.
 
 | App | Image | Port | Volume | Notes |
 |-----|-------|------|--------|-------|
-| M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`; no image registry login needed once the GHCR package is public. |
+| M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`. Public GHCR package: no registry login needed. |
 
 ## Status
 
