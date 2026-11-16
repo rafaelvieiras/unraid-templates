@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CommunityApplications>
   <Profile>
-    Unraid container templates maintained by [Rafael Vieiras](https://github.com/rafaelvieiras).
+    Unraid container templates maintained by Rafael Vieiras (https://github.com/rafaelvieiras).
 
-    One template per self-hosted project published to Unraid Community Applications.
-    Each app has its own XML file under `templates/` and its own support link, so bug
-    reports go to the project repository. Source code is on GitHub under the same
+    Apps in this repository:
+    - M3m0s: long-term memory for LLM agents (MCP, CLI and an embedded WebUI) over one local
+      SQLite database. Source code and support: https://github.com/rafaelvieiras/m3m0s
+
+    Each app has its own XML file under templates/ and its own support link, so bug reports go
+    to the project repository. All projects are open source (MIT) on GitHub under the same
     maintainer account.
   </Profile>
   <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icon.svg</Icon>
