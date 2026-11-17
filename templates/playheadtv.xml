@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>Playhead TV</Name>
+  <Repository>ghcr.io/rafaelvieiras/playheadtv-backend:v0.3.15</Repository>
+  <Registry>https://github.com/rafaelvieiras/playheadtv/pkgs/container/playheadtv-backend</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/rafaelvieiras/playheadtv/issues</Support>
+  <Project>https://github.com/rafaelvieiras/playheadtv</Project>
+  <Overview>Your own linear TV channels assembled on the client: the backend owns the schedule and the sync, the player stitches programs, bumpers and commercials from your Jellyfin library. No server-side transcoding, no tuner.</Overview>
+  <Category>MediaApp:Video: MediaServer:Video:</Category>
+  <WebUI>http://[IP]:[PORT:9394]/admin/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/playheadtv.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/playheadtv.svg</Icon>
+  <ExtraParams>--user 99:100 --health-cmd "/server healthcheck" --health-interval 30s --health-timeout 5s --health-retries 3 --health-start-period 120s</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <Date>2026-11-16</Date>
+  <Changes>Initial template. Backend v0.3.15, pinned: this project publishes no latest tag.</Changes>
+  <MinVer>6.9</MinVer>
+  <License>MIT</License>
+  <ExtraSearchTerms>linear tv channels schedule epg jellyfin virtual channels nostalgia quasitv ersatztv tunarr streaming</ExtraSearchTerms>
+  <Description><![CDATA[
+Playhead TV gives you linear TV again: a channel with a schedule that keeps playing whether you
+watch it or not. The difference from ErsatzTV and Tunarr is where the work happens. Their server
+runs ffmpeg to package one continuous stream per channel. Playhead TV keeps that work on the
+client: each client talks to Jellyfin, resolves the schedule from this backend, and plays the
+original files itself, stitching programs, commercials and bumpers with its own preload and
+crossfade logic. The backend only owns scheduling metadata and user/device sync, and never touches
+video.
+
+### What this container is
+
+This is the **backend**: REST API, MCP endpoint and the admin web UI. It is not the player. The
+players are separate Flutter apps (Linux and Windows desktop, Android TV, Android phones; iOS and
+tvOS still ahead), published as `client-vX.Y.Z` releases in the project. Install this first, then
+point the client at it.
+
+A Jellyfin server is the media source. Playhead TV does not hold a library of its own.
+
+### First start: create the admin user before you expose the port
+
+A fresh instance has no user, and the endpoint that creates the first one is public until it is
+used. From a terminal, before anyone else can reach the port:
+
+```
+curl -sS -X POST http://<server>:9394/app-users \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "you@example.com", "password": "a strong password"}'
+```
+
+The password must be at least 8 characters. Then open `/admin/` and sign in. After the first user
+exists the endpoint answers 409, so it cannot be used again.
+
+### Backups
+
+`/data` holds `playheadtv.db` and `encryption.key`. Stored media-source credentials are encrypted
+with that key, which is generated on first start if you do not set `PLAYHEADTV_ENCRYPTION_KEY`.
+Back up both together: a backup of the database without the key cannot decrypt the credentials.
+
+### Container notes
+
+- **No `latest` tag exists.** The template pins `v0.3.15` on purpose, matching the project rule of
+  pinning an immutable release. To upgrade, change the repository tag after reading the release
+  notes.
+- The image has no shell and no curl. The healthcheck calls the server binary itself
+  (`/server healthcheck`), already set in the extra parameters.
+- The image runs as root by default. The template adds `--user 99:100` so `/data` stays
+  `nobody:users` like every other Unraid container.
+- The admin UI is served on the same port as the API (9394). Put a TLS reverse proxy in front if it
+  needs to be reachable from outside your LAN.
+- `PLAYHEADTV_EPG_WINDOW` (default 72h) is how far ahead the guide is materialized. Clients cache
+  that window, so a longer window means more offline autonomy and more data.
+
+Project documentation: https://github.com/rafaelvieiras/playheadtv
+  ]]></Description>
+  <Networking>
+    <Mode>bridge</Mode>
+    <Publish>
+      <Port>
+        <HostPort>9394</HostPort>
+        <ContainerPort>9394</ContainerPort>
+        <Protocol>tcp</Protocol>
+      </Port>
+    </Publish>
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/user/appdata/playheadtv</HostDir>
+      <ContainerDir>/data</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <Environment>
+    <Variable>
+      <Value>PLAYHEADTV_DB_PATH</Value>
+      <Value>/data/playheadtv.db</Value>
+    </Variable>
+    <Variable>
+      <Value>PLAYHEADTV_ADDR</Value>
+      <Value>:9394</Value>
+    </Variable>
+  </Environment>
+  <Config Name="WebUI" Target="9394" Default="9394" Mode="tcp" Description="HTTP port for the REST API, the MCP endpoint and the admin UI at /admin/." Type="Port" Display="always" Required="true" Mask="false">9394</Config>
+  <Config Name="Data" Target="/data" Default="/mnt/user/appdata/playheadtv" Mode="rw" Description="Database and encryption key. Back up both together: the key decrypts the stored credentials." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/playheadtv</Config>
+  <Config Name="EPG window" Target="PLAYHEADTV_EPG_WINDOW" Default="72h" Description="How far ahead the guide is materialized, between 1h and 720h. Clients can play offline for about as long." Type="Variable" Display="always" Required="false" Mask="false">72h</Config>
+  <Config Name="Log level" Target="PLAYHEADTV_LOG_LEVEL" Default="" Description="error, warn, info, debug or trace. Empty keeps the default output." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Encryption key" Target="PLAYHEADTV_ENCRYPTION_KEY" Default="" Description="32 random bytes, base64 (openssl rand -base64 32). Empty: generated into /data/encryption.key on first start." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+</Container>

@@ -11,7 +11,7 @@ raw GitHub URLs and lists the apps in the Apps tab after review.
 | Path | Purpose |
 |------|---------|
 | `ca_profile.xml` | Repository profile shown in CA. Must stay at the repository root. |
-| `templates/` | One XML file per Docker app (`m3m0s.xml`, `tinyfin.xml`, `tinyfin-api.xml`, `my-media-db.xml`, plus the `.example` skeleton). |
+| `templates/` | One XML file per Docker app (`m3m0s.xml`, `tinyfin.xml`, `tinyfin-api.xml`, `my-media-db.xml`, `playheadtv.xml`, plus the `.example` skeleton). |
 | `icons/` | Square icons for apps whose own repository only ships a wide logo. |
 | `plugins/` | One XML wrapper per Unraid plugin (none yet). |
 | `icon.svg` | Repository icon referenced by `ca_profile.xml`. |
@@ -23,10 +23,11 @@ raw GitHub URLs and lists the apps in the Apps tab after review.
 | M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`. Public GHCR package: no registry login needed. || Tinyfin | `ghcr.io/rafaelvieiras/tinyfin-web:latest` | 8096 | `/data`, `/media` (ro) | Jellyfin-compatible media server with the bundled web UI at `/web/`. Image also carries the GPL-2.0 `jellyfin-web` build. Runs as `99:100`. |
 | Tinyfin API | `ghcr.io/rafaelvieiras/tinyfin:latest` | 8096 | `/data`, `/media` (ro) | Same server, API only: MIT image with no bundled UI. Use it with the Jellyfin mobile, TV or Kodi clients. Runs as `99:100`. |
 | MyMediaDB | `ghcr.io/rafaelvieiras/my-media-db:latest` | 8080 | `/data`, `/media` (rw) | Self-hosted media catalog (scan, match, NFO export, API). `/media` is read-write because the NFO export writes next to the files. No authentication yet. Runs as `99:100`. |
+| Playhead TV | `ghcr.io/rafaelvieiras/playheadtv-backend:v0.3.15` | 9394 | `/data` | Linear TV channels assembled on the client, over a Jellyfin library. Backend only (schedule + admin UI). No `latest` tag: the template pins the release. Runs as `99:100`. |
 
 ## Status
 
-`M3m0s`, `Tinyfin`, `Tinyfin API` and `MyMediaDB` are the templates so far. Nothing is submitted yet, so the
+`M3m0s`, `Tinyfin`, `Tinyfin API`, `MyMediaDB` and `Playhead TV` are the templates so far. Nothing is submitted yet, so the
 repository is not registered in CA and the listing does not exist. Locally they can be installed
 from the flash drive: `dockerMan/templates-user/` feeds the *Add Container* dropdown, and
 `community.applications/private/<folder>/*.xml` feeds the *Private* category in the Apps tab.
