@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="8 9 80 80" width="256" height="256" role="img" aria-label="Tinyfin">
+  <title>Tinyfin</title>
+  <rect x="8" y="9" width="80" height="80" rx="18" fill="#111827"/>
+  <g fill="none" stroke="#f9fafb" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"
+     transform="translate(48 49) scale(0.85) translate(-48 -49)">
+    <path d="M14 40c7-9 15-13 24-13 12 0 21 8 26 22-5 14-14 22-26 22-9 0-17-4-24-13"/>
+    <path d="M64 49c5-9 11-13 18-13M64 49c5 9 11 13 18 13"/>
+    <path d="M27 37c0 8 0 16 0 24"/>
+  </g>
+</svg>

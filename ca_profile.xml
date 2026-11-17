@@ -6,6 +6,9 @@
     Apps in this repository:
     - M3m0s: long-term memory for LLM agents (MCP, CLI and an embedded WebUI) over one local
       SQLite database. Source code and support: https://github.com/rafaelvieiras/m3m0s
+    - Tinyfin: a Jellyfin-compatible media server in one Go binary, shipped with the Jellyfin
+      web UI and jellyfin-ffmpeg. An API-only variant is published as Tinyfin API.
+      Source code and support: https://github.com/rafaelvieiras/tinyfin
 
     Each app has its own XML file under templates/ and its own support link, so bug reports go
     to the project repository. All projects are open source (MIT) on GitHub under the same

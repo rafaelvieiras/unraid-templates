@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>Tinyfin</Name>
+  <Repository>ghcr.io/rafaelvieiras/tinyfin-web:latest</Repository>
+  <Registry>https://github.com/rafaelvieiras/tinyfin/pkgs/container/tinyfin-web</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/rafaelvieiras/tinyfin/issues</Support>
+  <Project>https://github.com/rafaelvieiras/tinyfin</Project>
+  <Overview>Jellyfin-compatible media server in one Go binary: same API and same clients, with all state in a single SQLite file instead of an in-memory catalog. WebUI and jellyfin-ffmpeg are included.</Overview>
+  <Category>MediaServer:Video: MediaApp:Video:</Category>
+  <WebUI>http://[IP]:[PORT:8096]/web/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/tinyfin.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/tinyfin.svg</Icon>
+  <ExtraParams>--user 99:100</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <Date>2026-11-16</Date>
+  <Changes>Initial template. Image 0.2.0.</Changes>
+  <MinVer>6.9</MinVer>
+  <License>MIT (the image bundles the GPL-2.0 jellyfin-web build)</License>
+  <ExtraSearchTerms>jellyfin media server movies tv shows transcode ffmpeg nvenc emby alternative</ExtraSearchTerms>
+  <Description><![CDATA[
+Tinyfin speaks the Jellyfin HTTP API, so unchanged Jellyfin clients work against it: the web
+UI, the mobile and TV apps, the Kodi add-on, Findroid, Infuse. It is a clean-room
+implementation, not a fork, and the state lives in one SQLite file.
+
+### First start
+
+1. Open `http://<server>:8096/web/` and finish the first-run wizard. Create the admin user
+   there before you expose the port.
+2. Add libraries pointing at `/media`. The path is mounted read-only on purpose, because
+   Tinyfin never writes to your files.
+3. Reaching it from a Jellyfin client: use `http://<server>:8096` as the server address.
+
+### Metadata and scanning
+
+`TINYFIN_TMDB_API_KEY` is optional. Without it the scan catalogues files and reads local NFO
+and artwork, with no online metadata. The scanner skips a file when size and mtime did not
+change; `TINYFIN_SCAN_FORCE_PROBE` re-probes everything.
+
+### Container notes
+
+- The image is distroless: no shell, no curl, no wget. It cannot carry a Docker healthcheck.
+  Check `GET /System/Info/Public` from outside instead.
+- The image runs as uid 65532 by default. The template adds `--user 99:100` so appdata stays
+  `nobody:users` like every other Unraid container. Files created under `/data` belong to
+  `nobody:users`.
+- `/data` holds `tinyfin.db`, `tinyfin.db.images`, `tinyfin.db.server-id` and `log/`. Keep it
+  on a path you back up. A fresh instance starts empty.
+- NVIDIA hardware transcoding: add
+  `--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=compute,video,utility`
+  to the extra parameters and install the Unraid NVIDIA driver plugin.
+- The container port is 8096, the Jellyfin default, so a client only needs the new address. If
+  Jellyfin or Emby already owns 8096 on this server, pick another host port.
+
+### Status
+
+Release `0.x`. Phases 0 to 3 are done and were tested against real clients. Coverage is honest,
+not complete: check `docs/COVERAGE.md` in the project before you rely on a feature. Live TV,
+DVR, DLNA, offline mobile sync and a plugin loader are out of scope for 0.x.
+
+### Licensing
+
+Tinyfin is MIT. This image also ships the GPL-2.0 `jellyfin-web` build as static files. The
+API-only variant with no bundled UI is published as the `Tinyfin API` template.
+
+Project documentation: https://github.com/rafaelvieiras/tinyfin
+  ]]></Description>
+  <Networking>
+    <Mode>bridge</Mode>
+    <Publish>
+      <Port>
+        <HostPort>8096</HostPort>
+        <ContainerPort>8096</ContainerPort>
+        <Protocol>tcp</Protocol>
+      </Port>
+    </Publish>
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/user/appdata/tinyfin</HostDir>
+      <ContainerDir>/data</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+    <Volume>
+      <HostDir>/mnt/user/media</HostDir>
+      <ContainerDir>/media</ContainerDir>
+      <Mode>ro</Mode>
+    </Volume>
+  </Data>
+  <Config Name="WebUI" Target="8096" Default="8096" Mode="tcp" Description="HTTP port for the API and the bundled web UI. Jellyfin clients use the same port." Type="Port" Display="always" Required="true" Mask="false">8096</Config>
+  <Config Name="Data" Target="/data" Default="/mnt/user/appdata/tinyfin" Mode="rw" Description="SQLite database, generated images, server id and logs. Keep it on a path you back up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/tinyfin</Config>
+  <Config Name="Media" Target="/media" Default="/mnt/user/media" Mode="ro" Description="Your media, read-only. Libraries inside Tinyfin are added with the /media path." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/media</Config>
+  <Config Name="TMDB API key" Target="TINYFIN_TMDB_API_KEY" Default="" Description="Enables online metadata. Empty: catalog-only scan using local NFO and artwork." Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="Scan concurrency" Target="TINYFIN_SCAN_CONCURRENCY" Default="8" Description="Scan workers per library. Raise it for a slow remote filesystem." Type="Variable" Display="advanced" Required="false" Mask="false">8</Config>
+  <Config Name="Library parallelism" Target="TINYFIN_SCAN_LIBRARY_PARALLELISM" Default="3" Description="Libraries scanned at the same time." Type="Variable" Display="advanced" Required="false" Mask="false">3</Config>
+  <Config Name="Timezone" Target="TZ" Default="" Description="Container timezone for log timestamps. Empty: UTC." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+</Container>

@@ -11,7 +11,8 @@ raw GitHub URLs and lists the apps in the Apps tab after review.
 | Path | Purpose |
 |------|---------|
 | `ca_profile.xml` | Repository profile shown in CA. Must stay at the repository root. |
-| `templates/` | One XML file per Docker app (`m3m0s.xml` today, plus the `.example` skeleton). |
+| `templates/` | One XML file per Docker app (`m3m0s.xml`, `tinyfin.xml`, `tinyfin-api.xml`, plus the `.example` skeleton). |
+| `icons/` | Square icons for apps whose own repository only ships a wide logo. |
 | `plugins/` | One XML wrapper per Unraid plugin (none yet). |
 | `icon.svg` | Repository icon referenced by `ca_profile.xml`. |
 
@@ -19,12 +20,15 @@ raw GitHub URLs and lists the apps in the Apps tab after review.
 
 | App | Image | Port | Volume | Notes |
 |-----|-------|------|--------|-------|
-| M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`. Public GHCR package: no registry login needed. |
+| M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`. Public GHCR package: no registry login needed. || Tinyfin | `ghcr.io/rafaelvieiras/tinyfin-web:latest` | 8096 | `/data`, `/media` (ro) | Jellyfin-compatible media server with the bundled web UI at `/web/`. Image also carries the GPL-2.0 `jellyfin-web` build. Runs as `99:100`. |
+| Tinyfin API | `ghcr.io/rafaelvieiras/tinyfin:latest` | 8096 | `/data`, `/media` (ro) | Same server, API only: MIT image with no bundled UI. Use it with the Jellyfin mobile, TV or Kodi clients. Runs as `99:100`. |
 
 ## Status
 
-`M3m0s` is the first and only template. Nothing is submitted yet, so the repository is not
-registered in CA and the listing does not exist.
+`M3m0s`, `Tinyfin` and `Tinyfin API` are the templates so far. Nothing is submitted yet, so the
+repository is not registered in CA and the listing does not exist. Locally they can be installed
+from the flash drive: `dockerMan/templates-user/` feeds the *Add Container* dropdown, and
+`community.applications/private/<folder>/*.xml` feeds the *Private* category in the Apps tab.
 
 ## Adding an app
 
