@@ -9,6 +9,9 @@
     - Tinyfin: a Jellyfin-compatible media server in one Go binary, shipped with the Jellyfin
       web UI and jellyfin-ffmpeg. An API-only variant is published as Tinyfin API.
       Source code and support: https://github.com/rafaelvieiras/tinyfin
+    - MyMediaDB: a self-hosted media catalog that scans library folders, matches titles against
+      TMDB, TheTVDB and MusicBrainz, and keeps every field editable by the owner.
+      Source code and support: https://github.com/rafaelvieiras/my-media-db
 
     Each app has its own XML file under templates/ and its own support link, so bug reports go
     to the project repository. All projects are open source (MIT) on GitHub under the same
