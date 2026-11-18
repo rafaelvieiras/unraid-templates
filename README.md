@@ -22,7 +22,7 @@ raw GitHub URLs and lists the apps in the Apps tab after review.
 |-----|-------|------|--------|-------|
 | M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`. Public GHCR package: no registry login needed. || Tinyfin | `ghcr.io/rafaelvieiras/tinyfin-web:latest` | 8096 | `/data`, `/media` (ro) | Jellyfin-compatible media server with the bundled web UI at `/web/`. Image also carries the GPL-2.0 `jellyfin-web` build. Runs as `99:100`. |
 | Tinyfin API | `ghcr.io/rafaelvieiras/tinyfin:latest` | 8096 | `/data`, `/media` (ro) | Same server, API only: MIT image with no bundled UI. Use it with the Jellyfin mobile, TV or Kodi clients. Runs as `99:100`. |
-| MyMediaDB | `ghcr.io/rafaelvieiras/my-media-db:latest` | 8080 | `/data`, `/media` (rw) | Self-hosted media catalog (scan, match, NFO export, API). `/media` is read-write because the NFO export writes next to the files. No authentication yet. Runs as `99:100`. |
+| MyMediaDB | `ghcr.io/rafaelvieiras/my-media-db:latest` | 8080 | `/data`, `/media` (rw) | Self-hosted media catalog (scan, match, NFO export, API). `/media` is read-write because the NFO export writes next to the files. No authentication yet. Takes `PUID`/`PGID` (default `99:100`). |
 | Playhead TV | `ghcr.io/rafaelvieiras/playheadtv-backend:v0.3.15` | 9394 | `/data` | Linear TV channels assembled on the client, over a Jellyfin library. Backend only (schedule + admin UI). No `latest` tag: the template pins the release. Runs as `99:100`. |
 
 ## Status
@@ -51,7 +51,19 @@ Then:
 3. Use `:latest` as the image tag. Releases then reach users through the image, not
    through template edits. Only edit the template when the configuration surface
    changes: a new env var, port, volume, or description/category update.
-4. Run `xmllint --noout ca_profile.xml templates/*.xml` locally.
+4. Validate before committing:
+
+   ```bash
+   xmllint --noout ca_profile.xml templates/*.xml
+   # Must print nothing: no legacy blocks anywhere.
+   grep -nE "<(Networking|Data|Environment)>" templates/*.xml
+   ```
+
+   The legacy blocks are not cosmetic. On 17/nov a container recreated from a template
+   that had them next to the modern `<Config>` entries came up with an **empty
+   environment** and `PortBindings=map[8080/tcp:[{invalid IP 8080}]]`: the app was
+   healthy, the container was not. Every port, path and variable belongs in a `<Config>`
+   entry and nowhere else. See [`AGENTS.md`](AGENTS.md).
 5. Commit and push to `main`.
 6. Submit at <https://ca.unraid.net/submit>: sign in, add the repository URL, run
    **Validate**, then **Scan**, preview the listing, and submit. That step is an
@@ -65,7 +77,9 @@ Then:
 - `<WebUI>` refers to the **container** port, not the host port. Unraid rewrites the URL
   when the user remaps the host port.
 - Default `PUID`/`PGID` are `99`/`100` (`nobody:users`), otherwise the app cannot write
-  to `/mnt/user/appdata`.
+  to `/mnt/user/appdata`. Prefer exposing them as `<Config>` variables with those
+  defaults when the image honours them; fall back to `--user 99:100` in `<ExtraParams>`
+  only when it does not.
 - Bridge and host networking are the main source of support load. Bake the guidance into
   `<Overview>`/`<Description>`: keep the app bound to `0.0.0.0`, and remember that
   container-name DNS does not work in host mode.

@@ -17,8 +17,9 @@
   <ExtraParams>--user 99:100</ExtraParams>
   <PostArgs/>
   <CPUset/>
-  <Date>2026-11-16</Date>
-  <Changes>Initial template. Image 0.8.1.</Changes>
+  <Date>2026-11-18</Date>
+  <Changes>Dropped the legacy Networking/Data/Environment blocks (they duplicate the Config entries and broke a recreate on 17/nov); M3M0S_DATA_DIR moved into a Config entry, because the image default is ~/.m3m0s/data.
+Initial template. Image 0.8.1.</Changes>
   <MinVer>6.9</MinVer>
   <License>MIT</License>
   <ExtraSearchTerms>memory ai agent mcp rag embeddings llm claude</ExtraSearchTerms>
@@ -56,30 +57,8 @@ vector search.
 - No database is shipped with the image. A fresh instance starts empty.
 - Project documentation: https://github.com/rafaelvieiras/m3m0s
   ]]></Description>
-  <Networking>
-    <Mode>bridge</Mode>
-    <Publish>
-      <Port>
-        <HostPort>19234</HostPort>
-        <ContainerPort>19234</ContainerPort>
-        <Protocol>tcp</Protocol>
-      </Port>
-    </Publish>
-  </Networking>
-  <Data>
-    <Volume>
-      <HostDir>/mnt/user/appdata/m3m0s</HostDir>
-      <ContainerDir>/data</ContainerDir>
-      <Mode>rw</Mode>
-    </Volume>
-  </Data>
-  <Environment>
-    <Variable>
-      <Value>M3M0S_DATA_DIR</Value>
-      <Value>/data</Value>
-    </Variable>
-  </Environment>
   <Config Name="WebUI" Target="19234" Default="19234" Mode="tcp" Description="HTTP port for the WebUI, the REST API and the MCP endpoint." Type="Port" Display="always" Required="true" Mask="false">19234</Config>
+  <Config Name="Data directory" Target="M3M0S_DATA_DIR" Default="/data" Description="Where the index, the API keys and the self-documentation cache live. Must stay inside the /data mount." Type="Variable" Display="advanced" Required="false" Mask="false">/data</Config>
   <Config Name="Data" Target="/data" Default="/mnt/user/appdata/m3m0s" Mode="rw" Description="Database, index and API keys. Keep it on a path you back up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/m3m0s</Config>
   <Config Name="OpenAI API key" Target="OPENAI_API_KEY" Default="" Description="Used for embeddings. Empty: keyword-only mode (FTS5 search, exact-match dedup)." Type="Variable" Display="always" Required="false" Mask="true"></Config>
   <Config Name="OpenAI base URL" Target="M3M0S_OPENAI_BASE_URL" Default="" Description="Optional OpenAI-compatible embeddings endpoint. Empty: api.openai.com." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
