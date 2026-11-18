@@ -29,7 +29,6 @@ profile icon. So every `<Icon>` and the `<Icon>` in `ca_profile.xml` point to a 
 | `icons/my-media-db.png` | `templates/my-media-db.xml` |
 | `icons/tinyfin.png` | `templates/tinyfin.xml`, `templates/tinyfin-api.xml` |
 | `icons/playheadtv.png` | `templates/playheadtv.xml` |
-| `icons/frigate.png` | local template only: `dockerMan/templates-user/my-frigate.xml` on the server (upstream Frigate repo has no stable square PNG, so it is self-hosted here) |
 
 ## Apps
 
