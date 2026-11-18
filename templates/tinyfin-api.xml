@@ -16,8 +16,9 @@
   <ExtraParams>--user 99:100</ExtraParams>
   <PostArgs/>
   <CPUset/>
-  <Date>2026-11-16</Date>
-  <Changes>Initial template. Image 0.2.0.</Changes>
+  <Date>2026-11-18</Date>
+  <Changes>Dropped the legacy Networking/Data/Environment blocks: they duplicate the Config entries, and a recreate that reads them came up with an empty environment and an invalid port binding on 17/nov.
+Initial template. Image 0.2.0.</Changes>
   <MinVer>6.9</MinVer>
   <License>MIT</License>
   <ExtraSearchTerms>jellyfin media server movies tv shows transcode ffmpeg nvenc emby alternative api</ExtraSearchTerms>
@@ -64,28 +65,6 @@ DVR, DLNA, offline mobile sync and a plugin loader are out of scope for 0.x.
 
 Project documentation: https://github.com/rafaelvieiras/tinyfin
   ]]></Description>
-  <Networking>
-    <Mode>bridge</Mode>
-    <Publish>
-      <Port>
-        <HostPort>8096</HostPort>
-        <ContainerPort>8096</ContainerPort>
-        <Protocol>tcp</Protocol>
-      </Port>
-    </Publish>
-  </Networking>
-  <Data>
-    <Volume>
-      <HostDir>/mnt/user/appdata/tinyfin-api</HostDir>
-      <ContainerDir>/data</ContainerDir>
-      <Mode>rw</Mode>
-    </Volume>
-    <Volume>
-      <HostDir>/mnt/user/media</HostDir>
-      <ContainerDir>/media</ContainerDir>
-      <Mode>ro</Mode>
-    </Volume>
-  </Data>
   <Config Name="API port" Target="8096" Default="8096" Mode="tcp" Description="HTTP port for the Jellyfin API. Clients use the same port they would use against Jellyfin." Type="Port" Display="always" Required="true" Mask="false">8096</Config>
   <Config Name="Data" Target="/data" Default="/mnt/user/appdata/tinyfin-api" Mode="rw" Description="SQLite database, generated images, server id and logs. Keep it on a path you back up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/tinyfin-api</Config>
   <Config Name="Media" Target="/media" Default="/mnt/user/media" Mode="ro" Description="Your media, read-only. Libraries inside Tinyfin are added with the /media path." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/media</Config>
