@@ -10,7 +10,7 @@
   <Support>https://github.com/rafaelvieiras/m3m0s/issues</Support>
   <Project>https://github.com/rafaelvieiras/m3m0s</Project>
   <Overview>Long-term memory for LLM agents: MCP, CLI and an embedded WebUI over one local database. Tool-agnostic, so Claude Code, pi, opencode, Hermes and Open WebUI can read and write the same memory.</Overview>
-  <Category>Tools:Utilities:</Category>
+  <Category>Tools:Utilities</Category>
   <WebUI>http://[IP]:[PORT:19234]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/m3m0s.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/rafaelvieiras/m3m0s/main/site/public/icon-512.png</Icon>

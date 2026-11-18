@@ -10,10 +10,10 @@
   <Support>https://github.com/rafaelvieiras/my-media-db/issues</Support>
   <Project>https://github.com/rafaelvieiras/my-media-db</Project>
   <Overview>Self-hosted media catalog: scans your library folders, reads the technical metadata with ffprobe, matches titles against TMDB, TheTVDB and MusicBrainz, and keeps every field editable by you. SQLite plus an API, no external database server.</Overview>
-  <Category>MediaApp:Other: Tools:Utilities:</Category>
+  <Category>MediaApp:Other Tools:Utilities</Category>
   <WebUI>http://[IP]:[PORT:8080]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/my-media-db.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/my-media-db.svg</Icon>
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/my-media-db.png</Icon>
   <ExtraParams/>
   <PostArgs/>
   <CPUset/>

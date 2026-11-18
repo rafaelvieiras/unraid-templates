@@ -10,9 +10,9 @@
   <Support>https://github.com/rafaelvieiras/tinyfin/issues</Support>
   <Project>https://github.com/rafaelvieiras/tinyfin</Project>
   <Overview>Jellyfin-compatible media server in one Go binary, API only: no bundled web UI, MIT image with no GPL assets. Use it with the Jellyfin mobile, TV or Kodi clients, or when another web UI is already served elsewhere.</Overview>
-  <Category>MediaServer:Video: MediaApp:Video:</Category>
+  <Category>MediaServer:Video MediaApp:Video</Category>
   <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/tinyfin-api.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/tinyfin.svg</Icon>
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/tinyfin.png</Icon>
   <ExtraParams>--user 99:100</ExtraParams>
   <PostArgs/>
   <CPUset/>

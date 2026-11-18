@@ -10,10 +10,10 @@
   <Support>https://github.com/rafaelvieiras/playheadtv/issues</Support>
   <Project>https://github.com/rafaelvieiras/playheadtv</Project>
   <Overview>Your own linear TV channels assembled on the client: the backend owns the schedule and the sync, the player stitches programs, bumpers and commercials from your Jellyfin library. No server-side transcoding, no tuner.</Overview>
-  <Category>MediaApp:Video: MediaServer:Video:</Category>
+  <Category>MediaApp:Video MediaServer:Video</Category>
   <WebUI>http://[IP]:[PORT:9394]/admin/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/playheadtv.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/playheadtv.svg</Icon>
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/playheadtv.png</Icon>
   <ExtraParams>--user 99:100 --health-cmd "/server healthcheck" --health-interval 30s --health-timeout 5s --health-retries 3 --health-start-period 120s</ExtraParams>
   <PostArgs/>
   <CPUset/>

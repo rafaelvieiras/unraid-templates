@@ -12,9 +12,24 @@ raw GitHub URLs and lists the apps in the Apps tab after review.
 |------|---------|
 | `ca_profile.xml` | Repository profile shown in CA. Must stay at the repository root. |
 | `templates/` | One XML file per Docker app (`m3m0s.xml`, `tinyfin.xml`, `tinyfin-api.xml`, `my-media-db.xml`, `playheadtv.xml`, plus the `.example` skeleton). |
-| `icons/` | Square icons for apps whose own repository only ships a wide logo. |
+| `icons/` | Square **PNG** icons for apps whose own repository only ships a wide logo. The `.svg` next to each PNG is the source; it is never referenced by a template. |
 | `plugins/` | One XML wrapper per Unraid plugin (none yet). |
-| `icon.svg` | Repository icon referenced by `ca_profile.xml`. |
+| `icon.png` | Repository icon referenced by `ca_profile.xml` (`icon.svg` is the source). |
+
+### Icons must be PNG
+
+Unraid's dockerMan fetches `<Icon>` and caches it as `<Container>-icon.png`. When the URL
+points to an SVG, the SVG bytes are saved under a `.png` name and the browser cannot decode
+them: the container shows the generic placeholder. CA has the same limitation for the
+profile icon. So every `<Icon>` and the `<Icon>` in `ca_profile.xml` point to a PNG.
+
+| File | Referenced by |
+|------|---------------|
+| `icon.png` | `ca_profile.xml` |
+| `icons/my-media-db.png` | `templates/my-media-db.xml` |
+| `icons/tinyfin.png` | `templates/tinyfin.xml`, `templates/tinyfin-api.xml` |
+| `icons/playheadtv.png` | `templates/playheadtv.xml` |
+| `icons/frigate.png` | local template only: `dockerMan/templates-user/my-frigate.xml` on the server (upstream Frigate repo has no stable square PNG, so it is self-hosted here) |
 
 ## Apps
 
@@ -38,7 +53,9 @@ Prerequisites for the project being listed:
 
 - Public repository with an OSI-approved `LICENSE` at the root.
 - Image published on a public registry (GHCR or Docker Hub), ideally tagged `:latest`.
-- Square icon committed to the project repository and reachable over a raw URL.
+- Square **PNG** icon (256×256) committed to the project repository and reachable over a raw
+  URL. Keep the `.svg` source beside it, but reference the PNG: Unraid cannot render SVG
+  icons (see *Icons must be PNG*).
 - No name collision with an existing app at <https://ca.unraid.net/apps>.
 
 Then:
