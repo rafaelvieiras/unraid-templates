@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Container version="2">
   <Name>PlayheadTV</Name>
-  <Repository>ghcr.io/rafaelvieiras/playheadtv-backend:v0.3.15</Repository>
+  <Repository>ghcr.io/rafaelvieiras/playheadtv-backend:latest</Repository>
   <Registry>https://github.com/rafaelvieiras/playheadtv/pkgs/container/playheadtv-backend</Registry>
   <Network>bridge</Network>
   <MyIP/>
