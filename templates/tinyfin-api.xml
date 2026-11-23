@@ -3,7 +3,7 @@
   <Name>Tinyfin API</Name>
   <Repository>ghcr.io/rafaelvieiras/tinyfin:latest</Repository>
   <Registry>https://github.com/rafaelvieiras/tinyfin/pkgs/container/tinyfin</Registry>
-  <Network>bridge</Network>
+  <Network>host</Network>
   <MyIP/>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
@@ -16,8 +16,10 @@
   <ExtraParams>--user 99:100</ExtraParams>
   <PostArgs/>
   <CPUset/>
-  <Date>2026-11-18</Date>
-  <Changes>Dropped the legacy Networking/Data/Environment blocks: they duplicate the Config entries, and a recreate that reads them came up with an empty environment and an invalid port binding on 17/nov.
+  <Date>2026-11-22</Date>
+  <Changes>Network mode is now host: the client discovery responder (UDP 7359) only sees LAN broadcasts when the container shares the host's network namespace. Docker does not forward a broadcast to a published container port, so in bridge mode the responder answers unicast and stays invisible to clients. The server therefore listens on 8096 on the host and the port cannot be remapped.
+Added the 7359/udp discovery port, documented rather than published.
+Dropped the legacy Networking/Data/Environment blocks: they duplicate the Config entries, and a recreate that reads them came up with an empty environment and an invalid port binding on 17/nov.
 Initial template. Image 0.2.0.</Changes>
   <MinVer>6.9</MinVer>
   <License>MIT</License>
@@ -65,7 +67,8 @@ DVR, DLNA, offline mobile sync and a plugin loader are out of scope for 0.x.
 
 Project documentation: https://github.com/rafaelvieiras/tinyfin
   ]]></Description>
-  <Config Name="API port" Target="8096" Default="8096" Mode="tcp" Description="HTTP port for the Jellyfin API. Clients use the same port they would use against Jellyfin." Type="Port" Display="always" Required="true" Mask="false">8096</Config>
+  <Config Name="API port" Target="8096" Default="8096" Mode="tcp" Description="HTTP port for the Jellyfin API. Clients use the same port they would use against Jellyfin. The container runs with host networking, so this is the port Tinyfin binds on the host and cannot be remapped." Type="Port" Display="always" Required="true" Mask="false">8096</Config>
+  <Config Name="Client discovery" Target="7359" Default="7359" Mode="udp" Description="UDP port that answers Jellyfin client discovery broadcasts (who is JellyfinServer?). With host networking it is the same port on the host, so nothing is published for it. Blocked in the firewall means clients can only be added by address." Type="Port" Display="advanced" Required="false" Mask="false">7359</Config>
   <Config Name="Data" Target="/data" Default="/mnt/user/appdata/tinyfin-api" Mode="rw" Description="SQLite database, generated images, server id and logs. Keep it on a path you back up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/tinyfin-api</Config>
   <Config Name="Media" Target="/media" Default="/mnt/user/media" Mode="ro" Description="Your media, read-only. Libraries inside Tinyfin are added with the /media path." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/media</Config>
   <Config Name="TMDB API key" Target="TINYFIN_TMDB_API_KEY" Default="" Description="Enables online metadata. Empty: catalog-only scan using local NFO and artwork." Type="Variable" Display="always" Required="false" Mask="true"></Config>

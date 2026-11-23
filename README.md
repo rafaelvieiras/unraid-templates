@@ -34,8 +34,8 @@ profile icon. So every `<Icon>` and the `<Icon>` in `ca_profile.xml` point to a 
 
 | App | Image | Port | Volume | Notes |
 |-----|-------|------|--------|-------|
-| M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`. Public GHCR package: no registry login needed. || Tinyfin | `ghcr.io/rafaelvieiras/tinyfin-web:latest` | 8096 | `/data`, `/media` (ro) | Jellyfin-compatible media server with the bundled web UI at `/web/`. Image also carries the GPL-2.0 `jellyfin-web` build. Runs as `99:100`. |
-| Tinyfin API | `ghcr.io/rafaelvieiras/tinyfin:latest` | 8096 | `/data`, `/media` (ro) | Same server, API only: MIT image with no bundled UI. Use it with the Jellyfin mobile, TV or Kodi clients. Runs as `99:100`. |
+| M3m0s | `ghcr.io/rafaelvieiras/m3m0s:latest` | 19234 | `/data` | Long-term memory for LLM agents. Runs as `99:100`. Public GHCR package: no registry login needed. || Tinyfin | `ghcr.io/rafaelvieiras/tinyfin-web:latest` | 8096, 7359/udp | `/data`, `/media` (ro) | Jellyfin-compatible media server with the bundled web UI at `/web/`. Image also carries the GPL-2.0 `jellyfin-web` build. Runs as `99:100`. Host networking, for client discovery. |
+| Tinyfin API | `ghcr.io/rafaelvieiras/tinyfin:latest` | 8096, 7359/udp | `/data`, `/media` (ro) | Same server, API only: MIT image with no bundled UI. Use it with the Jellyfin mobile, TV or Kodi clients. Runs as `99:100`. Host networking, for client discovery. |
 | MyMediaDB | `ghcr.io/rafaelvieiras/my-media-db:latest` | 8080 | `/data`, `/media` (rw) | Self-hosted media catalog (scan, match, NFO export, API). `/media` is read-write because the NFO export writes next to the files. No authentication yet. Takes `PUID`/`PGID` (default `99:100`). |
 | Playhead TV | `ghcr.io/rafaelvieiras/playheadtv-backend:v0.3.15` | 9394 | `/data` | Linear TV channels assembled on the client, over a Jellyfin library. Backend only (schedule + admin UI). No `latest` tag: the template pins the release. Runs as `99:100`. |
 
@@ -99,6 +99,11 @@ Then:
 - Bridge and host networking are the main source of support load. Bake the guidance into
   `<Overview>`/`<Description>`: keep the app bound to `0.0.0.0`, and remember that
   container-name DNS does not work in host mode.
+- **A UDP broadcast does not reach a published container port.** Measured 22/nov/2026 with a plain
+  Go listener: unicast to the host's mapped port arrives, `255.255.255.255` and the subnet broadcast
+  never do, in bridge mode; with `--network host` all three arrive. Any app that relies on LAN
+  discovery (Jellyfin's UDP 7359, DLNA, mDNS) therefore needs host networking, and its port stops
+  being remappable in that mode.
 - A template has no repeatable config groups. For apps with N instances, expose one
   instance through env vars in the template and the rest through a mounted config file.
 
