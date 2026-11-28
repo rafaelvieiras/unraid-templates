@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>ComicFlex</Name>
+  <Repository>ghcr.io/rafaelvieiras/comicflex-server:latest</Repository>
+  <Registry>https://github.com/rafaelvieiras/comicflex/pkgs/container/comicflex-server</Registry>
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/comicflex.png</Icon>
+
+  <WebUI>http://[IP]:[PORT:10801]/</WebUI>
+
+  <Overview>ComicFlex is a comics, manga and digital book server with a web reader and OPDS support (fork of Stump, written in Rust). First run walks the setup wizard: create the admin account, then one library per folder.</Overview>
+
+  <Description><![CDATA[
+ComicFlex serves a comics and manga library over a web reader, OPDS v1.2/v2.0 and native
+KOReader sync. It is a fork of [Stump](https://github.com/stumpapp/stump) that carries
+reader fixes not yet upstream: panel auto-zoom that no longer slices into needless pan
+stops, ACBF parsing that keeps self-closed cover pages, and orphan balloons that no longer
+jump the reading order.
+
+### Volumes
+
+- `/data` = the library tree, **read-only**. One `<Config>` path per root folder; each LMS
+  naming convention below it is one library in the app.
+- `/config` = `Stump.toml`, `stump.db` (users, libraries, reading progress, thumbnails,
+  bookmarks) and the logs. This is the whole state; back it up.
+
+### Permissions
+
+The entrypoint honours `PUID`/`PGID` (`99`/`100` by default), fixes the ownership of
+`/config` and then drops privileges to that user — so do **not** add `--user` to
+`<ExtraParams>`, or the entrypoint cannot fix ownership at all.
+
+### Notes
+
+`/data` stays read-only on purpose: the app keeps its metadata in `/config`, and a server
+bug must not be able to touch the library. The entrypoint prints a harmless "chown: /data:
+Read-only file system" line on start because it tries to set the mount-point owner.
+]]></Description>
+
+  <Category>MediaApp:Books MediaServer:Other:</Category>
+  <Project>https://github.com/rafaelvieiras/comicflex</Project>
+  <Support>https://github.com/rafaelvieiras/comicflex/issues</Support>
+  <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/comicflex.xml</TemplateURL>
+
+  <MinVer>6.9</MinVer>
+  <License>MIT</License>
+  <Date>2026-11-28</Date>
+  <Changes>First release. Bridge network on port 10801, appdata in /mnt/cache/appdata/comicflex, library read-only from /mnt/user/library, runs as 99:100 through PUID/PGID.</Changes>
+  <ExtraSearchTerms>comics manga cbz cbr opds koreader library reader komga alternative</ExtraSearchTerms>
+
+  <ExtraParams>--log-opt max-size=20m --log-opt max-file=1</ExtraParams>
+
+  <Config Name="WebUI" Target="10801" Default="10801" Mode="tcp" Description="HTTP port of the web interface and the GraphQL API." Type="Port" Display="always" Required="true" Mask="false">10801</Config>
+  <Config Name="Appdata" Target="/config" Default="/mnt/cache/appdata/comicflex" Mode="rw" Description="Persistent data: Stump.toml, stump.db (libraries, users, progress), thumbnails and logs." Type="Path" Display="always" Required="true" Mask="false">/mnt/cache/appdata/comicflex</Config>
+  <Config Name="Library" Target="/data" Default="/mnt/user/library" Mode="ro" Description="Comics/library tree, read-only. Add one path per library root." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/library</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Description="User ID the server runs as. Unraid default: 99 (nobody)." Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Description="Group ID the server runs as. Unraid default: 100 (users)." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+  <Config Name="Timezone" Target="TZ" Default="America/Sao_Paulo" Description="Container timezone." Type="Variable" Display="advanced" Required="false" Mask="false">America/Sao_Paulo</Config>
+</Container>

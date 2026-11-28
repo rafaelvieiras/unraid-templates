@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>LMS</Name>
+  <Repository>epoupon/lms:latest</Repository>
+  <Registry>https://hub.docker.com/r/epoupon/lms</Registry>
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/lms.png</Icon>
+
+  <WebUI>http://[IP]:[PORT:5082]/</WebUI>
+
+  <Overview>Lightweight Music Server (LMS) is a self-hosted music streaming software: access your music collection from anywhere using a web interface. First run asks you to create the admin account, then one library per music folder.</Overview>
+
+  <Description><![CDATA[
+LMS is a self-hosted music streaming server written in C++ (low CPU and RAM), with a
+recommendation engine, multi-valued tags, artist relationships, MusicBrainz identifiers,
+ListenBrainz scrobbling, audio transcoding, ReplayGain and Subsonic/OpenSubsonic API support
+for the usual mobile clients.
+
+### Volumes
+
+- `/music` = the music shares to scan, **read-only**. Add one `<Config>` path per library and
+  point the library path in the LMS web UI at the container path.
+- `/var/lms` = working data: `lms.db` (users, settings, libraries, scan state) plus the
+  transcode cache. Back this up; it is the whole state of the server.
+
+### Permissions
+
+The image does not honour `PUID`/`PGID`, so the container runs as `--user 99:100`
+(`nobody:users`, the Unraid default) and `/var/lms` must be owned by it.
+
+### First run
+
+Open the WebUI and create the admin account. Then add a library (Settings → Libraries) with the
+container path of the music folder, and start the scan. The scan walks `lms.db`, so a large
+collection shows up progressively.
+]]></Description>
+
+  <Category>MediaApp:Music MediaServer:Music</Category>
+  <Project>https://github.com/epoupon/lms</Project>
+  <Support>https://github.com/epoupon/lms/issues</Support>
+  <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/lms.xml</TemplateURL>
+
+  <MinVer>6.9</MinVer>
+  <License>GPL-3.0</License>
+  <Date>2026-11-28</Date>
+  <Changes>First release. Bridge network on port 5082, appdata in /mnt/cache/appdata/lms, music read-only from /mnt/user/Music, runs as 99:100.</Changes>
+  <ExtraSearchTerms>music streaming subsonic opensubsonic listenbrainz musicbrainz navidrome alternative</ExtraSearchTerms>
+
+  <ExtraParams>--user 99:100</ExtraParams>
+
+  <Config Name="WebUI" Target="5082" Default="5082" Mode="tcp" Description="HTTP port of the web interface (also the Subsonic API port)." Type="Port" Display="always" Required="true" Mask="false">5082</Config>
+  <Config Name="Appdata" Target="/var/lms" Default="/mnt/cache/appdata/lms" Mode="rw" Description="Working data: lms.db (users, settings, libraries) and the transcode cache. Keep it on the cache pool." Type="Path" Display="always" Required="true" Mask="false">/mnt/cache/appdata/lms</Config>
+  <Config Name="Music" Target="/music" Default="/mnt/user/Music" Mode="ro" Description="Music share to scan, read-only. Add one path per library." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/Music</Config>
+  <Config Name="Timezone" Target="TZ" Default="America/Sao_Paulo" Description="Container timezone." Type="Variable" Display="advanced" Required="false" Mask="false">America/Sao_Paulo</Config>
+</Container>

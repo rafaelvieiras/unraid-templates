@@ -38,10 +38,12 @@ profile icon. So every `<Icon>` and the `<Icon>` in `ca_profile.xml` point to a 
 | Tinyfin API | `ghcr.io/rafaelvieiras/tinyfin:latest` | 8096, 7359/udp | `/data`, `/media` (ro) | Same server, API only: MIT image with no bundled UI. Use it with the Jellyfin mobile, TV or Kodi clients. Runs as `99:100`. Host networking, for client discovery. |
 | MyMediaDB | `ghcr.io/rafaelvieiras/my-media-db:latest` | 8080 | `/data`, `/media` (rw) | Self-hosted media catalog (scan, match, NFO export, API). `/media` is read-write because the NFO export writes next to the files. No authentication yet. Takes `PUID`/`PGID` (default `99:100`). |
 | Playhead TV | `ghcr.io/rafaelvieiras/playheadtv-backend:v0.3.15` | 9394 | `/data` | Linear TV channels assembled on the client, over a Jellyfin library. Backend only (schedule + admin UI). No `latest` tag: the template pins the release. Runs as `99:100`. |
+| LMS | `epoupon/lms:latest` | 5082 | `/var/lms`, `/music` (ro) | Lightweight Music Server: self-hosted music streaming with a Subsonic/OpenSubsonic API. Third-party image (`epoupon`), template based on the official CA one (`JPDVM2014/unraid-templates`), modernised to `<Config>`-only and pointed at the local shares. Runs as `99:100` via `--user`. |
+| ComicFlex | `ghcr.io/rafaelvieiras/comicflex-server:latest` | 10801 | `/config`, `/data` (ro) | Comics/manga server (fork of Stump with reader fixes). `/data` stays read-only; takes `PUID`/`PGID` (default `99:100`). |
 
 ## Status
 
-`M3m0s`, `Tinyfin`, `Tinyfin API`, `MyMediaDB` and `Playhead TV` are the templates so far. Nothing is submitted yet, so the
+`M3m0s`, `Tinyfin`, `Tinyfin API`, `MyMediaDB`, `Playhead TV`, `Tessera`, `LMS` and `ComicFlex` are the templates so far. Nothing is submitted yet, so the
 repository is not registered in CA and the listing does not exist. Locally they can be installed
 from the flash drive: `dockerMan/templates-user/` feeds the *Add Container* dropdown, and
 `community.applications/private/<folder>/*.xml` feeds the *Private* category in the Apps tab.
