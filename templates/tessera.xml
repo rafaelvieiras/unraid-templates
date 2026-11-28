@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>Tessera</Name>
+  <Repository>ghcr.io/rafaelvieiras/tessera:latest</Repository>
+  <Registry>https://github.com/rafaelvieiras/tessera/pkgs/container/tessera</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell/>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/rafaelvieiras/tessera/issues</Support>
+  <Project>https://github.com/rafaelvieiras/tessera</Project>
+  <Overview>Dashboard for your self-hosted services. Each tile carries a LAN address and an outside address, and shows which one answers right now. The page is rendered once when the config changes and served from memory, so it opens instantly and the container idles at about 12 MB. No database, no authentication, one JSON file.</Overview>
+  <Category>Tools: Network:Other</Category>
+  <WebUI>http://[IP]:[PORT:8484]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/templates/tessera.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/rafaelvieiras/unraid-templates/main/icons/tessera.png</Icon>
+  <ExtraParams>--user 99:100</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <Date>2026-11-28</Date>
+  <Changes>Initial template. Image 0.1.0.</Changes>
+  <MinVer>6.9</MinVer>
+  <License>MIT</License>
+  <ExtraSearchTerms>dashboard homelab start page links homepage bookmark service monitor status uptime tiles</ExtraSearchTerms>
+  <Description><![CDATA[
+Tessera is a start page for a homelab. One tile per service, each with the address
+you use inside the house and the address you use from anywhere, plus a dot that
+tells you which of the two is answering.
+
+### First start
+
+1. Open `http://<server>:8484/`. A `config.json` with one example service is
+   created in the appdata folder on first start.
+2. Press **Edit** in the page, or edit the file and press **Reload** in the API.
+   Both paths write the same document.
+3. Delete the example service and add your own. Keep both endpoints per service:
+   that pair is what keeps a tile usable when you are away from home.
+
+### How it works
+
+The document is rendered into a complete HTML page when it changes and kept in
+memory, gzip included. A request is an ETag check and one write, which is why the
+page appears before anything else on the network finishes connecting. The
+reachability dots come from a `HEAD` request per endpoint, cached for 15 seconds
+and shared between visitors; a login wall counts as alive.
+
+### Container notes
+
+- The image is scratch-based: no shell, no curl, no wget, so it cannot carry a
+  Docker healthcheck. Point an uptime checker at `GET /healthz` instead.
+- The template adds `--user 99:100` so `/mnt/user/appdata/tessera` stays
+  `nobody:users` like every other Unraid container. The image's own default is
+  uid 65532; without `--user` the appdata folder has to be chowned to that id.
+- The config lives in `/data/config.json`. Back it up: it is the whole state.
+- **There is no authentication.** Run it on your LAN, behind a VPN, or behind a
+  reverse proxy that authenticates. If it must be reachable by others, set
+  `TESSERA_READ_ONLY=true`: every write answers 403 and the editor button goes
+  away.
+
+### Status
+
+Release `0.1.0`. Endpoints, groups, icons, tags, theme, per-service health
+tuning and import/export of the JSON are implemented. Authentication and
+multi-user accounts are out of scope and documented as such.
+
+Project documentation: https://github.com/rafaelvieiras/tessera
+  ]]></Description>
+  <Config Name="WebUI" Target="8484" Default="8484" Mode="tcp" Description="HTTP port for the dashboard, the JSON API and the status endpoint." Type="Port" Display="always" Required="true" Mask="false">8484</Config>
+  <Config Name="Data" Target="/data" Default="/mnt/user/appdata/tessera" Mode="rw" Description="Holds config.json, which is the whole state of the dashboard. Keep it on a path you back up." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/tessera</Config>
+  <Config Name="Listen address" Target="TESSERA_ADDR" Default=":8484" Description="Address the process binds inside the container. Matches the container port above; change both or neither." Type="Variable" Display="advanced" Required="false" Mask="false">:8484</Config>
+  <Config Name="Config path" Target="TESSERA_CONFIG" Default="/data/config.json" Description="Where the JSON document lives inside the container." Type="Variable" Display="advanced" Required="false" Mask="false">/data/config.json</Config>
+  <Config Name="Read only" Target="TESSERA_READ_ONLY" Default="false" Description="true refuses every write (403) and hides the editor. Use it when the instance is reachable by people who should only look." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Probe cache (TTL)" Target="TESSERA_PROBE_TTL" Default="15s" Description="How long a reachability result is reused. Lower it for fresher dots at the cost of more requests to your services." Type="Variable" Display="advanced" Required="false" Mask="false">15s</Config>
+  <Config Name="File watch interval" Target="TESSERA_WATCH_INTERVAL" Default="2s" Description="How often the config file is checked for edits made outside the dashboard. The page is rebuilt within this window." Type="Variable" Display="advanced" Required="false" Mask="false">2s</Config>
+  <Config Name="Timezone" Target="TZ" Default="" Description="Container timezone for log timestamps, e.g. America/Sao_Paulo. Empty: UTC. The timezone database is embedded in the binary, so any zone name works." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+</Container>
